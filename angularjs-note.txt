@@ -1,0 +1,69 @@
+Controller Hierarchy (Scopes Within Scopes)
+
+Every part of an AngularJS application has a parent scope (as we’ve seen, at the ng-app level, this scope is called the $rootScope), regardless of the context within which it is rendered.
+
+There is one exception: A scope created inside of a directive is called the isolate scope.
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+
+==Expressions==
+
+Expressions are roughly similar to the result of an eval(javascript). Angular processes them; therefore, they have these important, distinct properties:• All expressions are executed in the context of the scope and have access to local $scope variables.• An expression doesn’t throw errors if it results in a TypeError or a ReferenceError. • They do not allow for any control flow functions (conditionals; e.g., if/else). • They can accept a filter and/or filter chains.
+
+Furthermore, all of the directives we use within this root element will have access to $rootScope as a result of the prototypical inheritance in our JavaScript code if the method of the directive has access to scope. 
+
+----------------------------------------------------------------
+----------------------------------------------------------------
+==Directive==
+
+<my-directive></my-directive>
+
+The myDirective directive definition looks like:angular.module('myApp', []) 
+	.directive('myDirective', function() {	 return { 	
+		restrict: 'E', 
+		template: '<a href="http://google.com"> Click me to go to Google</a>'	} 
+	});
+
+declare the directive in HTML using my-directive, the directive definition must be myDirective.
+
+The object that we return from the .directive() method comprises methods and properties that we use to define and configure our directive.
+
+The following are valid formats for declaring the directive we built above:<my-directive></my-directive> 
+<div my-directive></div> 
+<div class="my-directive"></div> 
+<!-- directive: my-directive -->
+
+element (E), 
+an attribute (A), 
+a class (C), or
+ a comment (M):
+
+this is valid 
+restrict: 'EAC',
+
+
+Given that a directive can (and usually should) be invoked as an attribute, we’re inclined to ask about the value passed to that attribute:
+
+**isolate scope
+To set properties on the inner scope of our directive, we have a few options. The simplest option is to simply use the existing scope currently provided by the controller (ng-controller) inside of which we’re nested.While simple, however, sharing state leaves us vulnerable. If that controller is removed or if a property with the name myUrl is later defined on its scope, we’ll be forced to change our code, which is costly and frustrating.To overcome this common issue, Angular provides the ability to create a new child scope or create an isolate scope.
+an isolate scope is completely separate from the current scope of the DOM.
+
+
+**Basic ng Attribute Directives
+
+ • ng-href
+ • ng-src
+ • ng-disabled
+ • ng-checked
+ • ng-readonly
+ • ng-selected
+ • ng-class
+ • ng-style
+
+
+**Directives with Child Scope
+Placing ng-app on any DOM element marks that element as the beginning of the $rootScope. $rootScope is the beginning of the scope chain, and all directives nested under the ng-app in yourHTML inherit from it.
+
+**JavaScript objects are either copy by value or copy by reference. String, Number, and Boolean are copy by value. Array, Object, and Function are copy by reference.
+
