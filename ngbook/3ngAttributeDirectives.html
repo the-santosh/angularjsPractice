@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="../angular.js"></script>
+        <script>
+            angular.module('myApp', []) .run(function($rootScope, $timeout) {
+                $rootScope.isDisabled = true; 
+                $timeout(function() {
+                    $rootScope.isDisabled = false; 
+                }, 5000);
+                //============
+                $timeout(function() { 
+                    $rootScope.myHref = 'http://google.com';
+                    $rootScope.imgSrc = 'https://www.google.com/images/srpr/logo11w.png';
+                }, 2000);
+            });
+        </script>
+    </head>
+
+    <body ng-app="myApp">
+        <input type="text" ng-model="someProperty" placeholder="Type to Enable"/> 
+        <br/>
+        <button ng-model="button" ng-disabled="!someProperty">A Button</button>
+        <br/>
+        <textarea ng-disabled="isDisabled">Wait 5 seconds</textarea>
+        <br/>
+        <input type="text" ng-model="someProperty1"><br/> 
+        <br/>        
+        <input type="text" ng-readonly="someProperty1" value="Some text here"/>
+        <br/>
+
+        <label>someProperty2 = {{someProperty2}}</label> 
+        <input type="checkbox" ng-checked="someProperty2" ng-init="someProperty2 = true" ng-model="someProperty2"/>
+
+        <br/>
+        <label>Select Two Fish:</label>
+        <input type="checkbox" ng-model="isTwoFish"/>
+        <br/>
+        <select>
+            <option>One Fish</option>
+            <option ng-selected="isTwoFish">Two Fish</option> 
+        </select>
+        <br/>
+        <!-- Always use ng-href when href includes an {{ expression }} -->
+        <a ng-href="{{myHref}}">I'm feeling lucky, when I load</a> 
+        <!-- href may not load before user clicks -->
+        <br/>
+        <a href="{{myHref}}">I'm feeling 404</a>
+        <br/>
+        <h1>Wrong Way</h1> <img src="{{imgSrc}}" />
+        <h1>Right way</h1> <img ng-src="{{imgSrc}}" />
+        <br/>
+    </body>
+</html>
