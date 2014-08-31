@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="../angular.js"></script>
+        <script>
+            angular.module('myApp', []) 
+            .controller('SomeController', function($scope) {
+                // anti-pattern, bare value
+                $scope.someBareValue = 'hello computer'; 
+                $scope.someAction = function() {
+                    $scope.someBareValue = 'hello human, from parent';
+                }; 
+            })
+            .controller('ChildController', function($scope) { 
+                $scope.childAction = function() {
+                    $scope.someBareValue = 'hello human, from child';
+                }; 
+            });
+            
+        </script>
+    </head>
+
+    <body ng-app="myApp">
+        <p>Because of the way prototypal inheritance works with value objects in JavaScript, changing someBareValue via an action in the parent does change it in the child, but not vice versa.</p>
+        <p>To see this problem in action, try clicking on the child button first and then the parent button. Doing so makes it clear that the child controller has copy, not a reference to someBareValue.</p>
+        <div ng-controller="SomeController"> {{ someBareValue }} 
+            <button ng-click="someAction()">Communicate to child</button> 
+            <div ng-controller="ChildController">
+                {{ someBareValue }}
+                <button ng-click="childAction()">Communicate to parent</button> 
+            </div>
+        </div>
+    </body>
+</html>

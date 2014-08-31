@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script src="../angular.js"></script>
+        <script>
+            angular.module('myApp', []) 
+            .controller('SomeController', function($scope) {
+                // anti-pattern, bare value
+                $scope.someModel = { 
+                    someValue: 'hello computer'
+                };
+
+                $scope.someAction = function() {
+                    $scope.someModel.someValue = 'hello human, from parent';
+                }; 
+            })
+            .controller('ChildController', function($scope) { 
+                $scope.childAction = function() {
+                    $scope.someModel.someValue = 'hello human, from child';
+                }; 
+            });
+            
+        </script>
+    </head>
+
+    <body ng-app="myApp">
+        <p>Because of the way prototypal inheritance works with value objects in JavaScript, changing someBareValue via an action in the parent does change it in the child, but not vice versa.</p>
+        <p>To see this problem in action, try clicking on the child button first and then the parent button. Doing so makes it clear that the child controller has copy, not a reference to someBareValue.</p>
+        <p>**JavaScript objects are either copy by value or copy by reference. String, Number, and Boolean are copy by value. Array, Object, and Function are copy by reference.</p>
+        <p>Had we set our string as a property on a model object, it would have been shared via reference, which means changing the property on the child will change it on the parent. The following example shows the correct way:</p>
+        
+        <div ng-controller="SomeController"> 
+            {{ someModel.someValue }}
+            <button ng-click="someAction()">Communicate to child</button> 
+            <div ng-controller="ChildController">
+                {{ someModel.someValue }}
+                <button ng-click="childAction()">Communicate to parent</button> 
+            </div>
+        </div>
+    </body>
+</html>
