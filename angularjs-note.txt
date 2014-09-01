@@ -1,3 +1,79 @@
+$scope.$apply
+Angular execution context
+digest loop
+
+
+• Separation of application logic, data models, and views
+• Ajax services
+• Dependency injection
+• Browser history (makes bookmarking and back/forward buttons work like normal web apps)
+• Testing
+• And more
+
+Without building any custom JavaScript components, the view will only reflect the data the model
+exposes at the time of the view rendering.
+
+
+Automatic data binding gives us the ability to consider the view to be a projection of the model state.
+Any time the model is changed in the client-side model, the view reflects these changes without
+writing any custom code. It just works.
+
+When Angular thinks that the value could change, it will call $digest() on the value to check
+whether the value is “dirty.” Hence, when the Angular runtime is running, it will look for potential
+changes on the value.
+
+This process is dirty checking. Dirty checking is a relatively efficient approach to checking for
+changes on a model. Every time there could be a potential change, Angular will do a dirty check
+inside its event loop (discussed in depth in the under the hood chapter) to ensure everything is
+consistent.
+
+The model object that we are referring to is the $scope object. The $scope object is simply
+a JavaScript object whose properties are all available to the view and with which the
+controller can interact. 
+
+Bi-directional in this context means that if the view changes the value, the model
+observes the change through dirty checking, and if the model changes the value, the
+view update with the change.
+
+The controller function takes one parameter, the $scope of the DOM element. This $scope
+object is available on the element and the controller (as we can see), and it will be the
+bridge by which we’ll communicate from the controller to the view.
+
+Using modules gives us a lot of advantages, such as:
+• Keeping our global namespace clean
+• Making tests easier to write and keeping them clean so as to more easily target isolated
+functionality
+• Making it easy to share code between applications
+• Allowing our app to load different parts of the code in any order
+
+scopes:
+The scopes of the application refer to the application model. Scopes are the execution context for
+expressions. The $scope object is where we define the business functinality of the application, the
+methods in our controllers, and properties in the views.
+
+Scopes serve as the glue between the controller and the view. Just before our app renders the view
+to the user, the view template links to the scope, and the app sets up the DOM to notify Angular
+for property changes.
+
+When Angular starts to run and generate the view, it will create a binding from the root ng-app
+element to the $rootScope. This $rootScope is the eventual parent of all $scope objects.
+
+If the callback executes outside of the Angular context, we can force the $scope to have
+knowledge of the change using the $apply method.
+
+After the scope expression is evaluated and the $digest loop runs, the $scope’s watch expressions
+will run dirty checking
+
+------------------------------------------
+controller
+
+The controller in AngularJS is a function that adds additional functionality to the scope of the view.
+We use it to set up an initial state and to add custom behavior to the scope object.
+When we create a new controller on a page, Angular passes it a new $scope. This new $scope is
+where we can set up the initial state of the scope on our controller. Since Angular takes care of
+handling the controller for us, we only need to write the constructor function.
+
+
 Controller Hierarchy (Scopes Within Scopes)
 
 Every part of an AngularJS application has a parent scope (as we’ve seen, at the ng-app level, this scope is called the $rootScope), regardless of the context within which it is rendered.
@@ -9,7 +85,9 @@ There is one exception: A scope created inside of a directive is called the isol
 
 ==Expressions==
 
-Expressions are roughly similar to the result of an eval(javascript). Angular processes them; therefore, they have these important, distinct properties:• All expressions are executed in the context of the scope and have access to local $scope variables.• An expression doesn’t throw errors if it results in a TypeError or a ReferenceError. • They do not allow for any control flow functions (conditionals; e.g., if/else). • They can accept a filter and/or filter chains.
+Expressions are roughly similar to the result of an eval(javascript). Angular processes them; therefore, they have these important, distinct properties:
+• All expressions are executed in the context of the scope and have access to local $scope variables.
+• An expression doesn’t throw errors if it results in a TypeError or a ReferenceError. • They do not allow for any control flow functions (conditionals; e.g., if/else). • They can accept a filter and/or filter chains.
 
 Furthermore, all of the directives we use within this root element will have access to $rootScope as a result of the prototypical inheritance in our JavaScript code if the method of the directive has access to scope. 
 
@@ -19,17 +97,21 @@ Furthermore, all of the directives we use within this root element will have acc
 
 <my-directive></my-directive>
 
-The myDirective directive definition looks like:angular.module('myApp', []) 
-	.directive('myDirective', function() {	 return { 	
+The myDirective directive definition looks like:
+angular.module('myApp', []) 
+	.directive('myDirective', function() {
+	 return { 	
 		restrict: 'E', 
-		template: '<a href="http://google.com"> Click me to go to Google</a>'	} 
+		template: '<a href="http://google.com"> Click me to go to Google</a>'
+	} 
 	});
 
 declare the directive in HTML using my-directive, the directive definition must be myDirective.
 
 The object that we return from the .directive() method comprises methods and properties that we use to define and configure our directive.
 
-The following are valid formats for declaring the directive we built above:<my-directive></my-directive> 
+The following are valid formats for declaring the directive we built above:
+<my-directive></my-directive> 
 <div my-directive></div> 
 <div class="my-directive"></div> 
 <!-- directive: my-directive -->
@@ -46,7 +128,9 @@ restrict: 'EAC',
 Given that a directive can (and usually should) be invoked as an attribute, we’re inclined to ask about the value passed to that attribute:
 
 **isolate scope
-To set properties on the inner scope of our directive, we have a few options. The simplest option is to simply use the existing scope currently provided by the controller (ng-controller) inside of which we’re nested.While simple, however, sharing state leaves us vulnerable. If that controller is removed or if a property with the name myUrl is later defined on its scope, we’ll be forced to change our code, which is costly and frustrating.To overcome this common issue, Angular provides the ability to create a new child scope or create an isolate scope.
+To set properties on the inner scope of our directive, we have a few options. The simplest option is to simply use the existing scope currently provided by the controller (ng-controller) inside of which we’re nested.
+While simple, however, sharing state leaves us vulnerable. If that controller is removed or if a property with the name myUrl is later defined on its scope, we’ll be forced to change our code, which is costly and frustrating.
+To overcome this common issue, Angular provides the ability to create a new child scope or create an isolate scope.
 an isolate scope is completely separate from the current scope of the DOM.
 
 
@@ -63,7 +147,8 @@ an isolate scope is completely separate from the current scope of the DOM.
 
 
 **Directives with Child Scope
-Placing ng-app on any DOM element marks that element as the beginning of the $rootScope. $rootScope is the beginning of the scope chain, and all directives nested under the ng-app in yourHTML inherit from it.
+Placing ng-app on any DOM element marks that element as the beginning of the $rootScope. $rootScope is the beginning of the scope chain, and all directives nested under the ng-app in your
+HTML inherit from it.
 
 **JavaScript objects are either copy by value or copy by reference. String, Number, and Boolean are copy by value. Array, Object, and Function are copy by reference.
 
